@@ -46,7 +46,9 @@
             <thead>
             <tr>
                 <th colspan="5">
-                    <a data-toggle="modal" data-target="#myModalCadastrar" class="btn btn-primary">Novo</a>
+                    <a th:href="@{/estados/ui/criar}">
+                        Novo
+                    </a>
                 </th>
             </tr>
             <tr>
@@ -63,7 +65,11 @@
                 <td th:text="${estados.sigla}"></td>
                 <td th:text="${estados.descricao}"></td>
                 <td>Editar</td>
-                <td>Deletar</td>
+                <td>
+                    <a th:href="@{/estados/ui/deletar/{id}(id=${estados.id})}">
+                        Deletar
+                    </a>
+                </td>
             </tr>
             </tbody>
         </table>
