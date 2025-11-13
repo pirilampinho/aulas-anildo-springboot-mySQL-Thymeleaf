@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Bootstrap Example</title>
+  <title>Listagem de Estados</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -13,7 +13,7 @@
 
 <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <!-- Brand -->
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">Teste</a>
 
     <!-- Toggler/collapsibe Button -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -64,7 +64,11 @@
                 <td th:text="${estados.id}"></td>
                 <td th:text="${estados.sigla}"></td>
                 <td th:text="${estados.descricao}"></td>
-                <td>Editar</td>
+                <td>
+                    <a th:href="@{/estados/ui/alterar/{id}(id=${estados.id})}">
+                        Editar
+                    </a>
+                </td>
                 <td>
                     <a th:href="@{/estados/ui/deletar/{id}(id=${estados.id})}">
                         Deletar

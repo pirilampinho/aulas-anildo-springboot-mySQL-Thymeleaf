@@ -15,6 +15,6 @@ public class Cliente {
     private Long id;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "estado_id")
-    private Estado estado;
+    private EstadoModel estado;
     private String nome;
 }

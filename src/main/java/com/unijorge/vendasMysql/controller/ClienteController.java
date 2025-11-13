@@ -1,7 +1,7 @@
 package com.unijorge.vendasMysql.controller;
 
 import com.unijorge.vendasMysql.model.Cliente;
-import com.unijorge.vendasMysql.model.Estado;
+import com.unijorge.vendasMysql.model.EstadoModel;
 import com.unijorge.vendasMysql.repository.ClienteRepository;
 import com.unijorge.vendasMysql.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class ClienteController {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<Cliente> salvar(@RequestBody Cliente cliente) {
         if (cliente.getEstado() != null && cliente.getEstado().getId() != null) {
-            Estado estado = estadoRepository.findById(cliente.getEstado().getId())
+            EstadoModel estado = estadoRepository.findById(cliente.getEstado().getId())
                     .orElseThrow(() -> new RuntimeException("Estado não encontrado"));
             cliente.setEstado(estado); // garante que está anexado ao contexto
         }
@@ -42,7 +42,7 @@ public class ClienteController {
             clienteExistente.setNome(clienteAtualizado.getNome());
             // Atualiza o estado (se informado)
             if (clienteAtualizado.getEstado() != null && clienteAtualizado.getEstado().getId() != null) {
-                Estado estado = estadoRepository.findById(clienteAtualizado.getEstado().getId())
+                EstadoModel estado = estadoRepository.findById(clienteAtualizado.getEstado().getId())
                         .orElseThrow(() -> new RuntimeException("Estado não encontrado"));
                 clienteExistente.setEstado(estado);
             }

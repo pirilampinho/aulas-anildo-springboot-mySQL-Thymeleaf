@@ -1,67 +1,70 @@
 package com.unijorge.vendasMysql.controller;
 
-import com.unijorge.vendasMysql.model.Estado;
+import com.unijorge.vendasMysql.dto.EstadoDTO;
+import com.unijorge.vendasMysql.model.EstadoModel;
 import com.unijorge.vendasMysql.repository.EstadoRepository;
+import com.unijorge.vendasMysql.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/estados")
 public class EstadoController {
-    @Autowired
-    private EstadoRepository estadoRepository;
+    private final EstadoService estadoService;
+
+    public EstadoController(EstadoService estadoService) {
+        this.estadoService = estadoService;
+    }
 
     @PostMapping
-    public ResponseEntity<Estado> criarEstado(@RequestBody Estado estado) {
-        Estado novoEstado = estadoRepository.save(estado);
-        return ResponseEntity.ok(novoEstado);
+    public ResponseEntity<String> criarEstado(@RequestBody EstadoDTO estado) {
+        EstadoDTO novoEstado = estadoService.criarEstado(estado);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Estado criado com sucesso: " + novoEstado.getSigla());
     }
 
     @GetMapping
-    public ResponseEntity<List<Estado>> listarEstados() {
-        List<Estado> estados = estadoRepository.findAll();
+    public ResponseEntity<List<EstadoDTO>> listarEstados() {
+        List<EstadoDTO> estados = estadoService.listarEstados();
         return ResponseEntity.ok(estados);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Estado> buscarPorId(@PathVariable Long id) {
-        Optional<Estado> estado = estadoRepository.findById(id);
-        if (estado.isPresent()) {
-            return ResponseEntity.ok(estado.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+        EstadoDTO estado = estadoService.listarEstadoPorID(id);
+        if (estado != null) return ResponseEntity.ok(estado);
+        return ResponseEntity.notFound().build();
     }
 
     // UPDATE - PUT
     @PutMapping("/{id}")
-    public ResponseEntity<Estado> atualizarEstado(@PathVariable Long id, @RequestBody Estado estadoAtualizado) {
-        Optional<Estado> estadoExistente = estadoRepository.findById(id);
+    public ResponseEntity<?> atualizarEstado(@PathVariable Long id, @RequestBody EstadoDTO estadoAtualizado) {
+        EstadoDTO estado = estadoService.atualizarEstado(id, estadoAtualizado);
 
-        if (estadoExistente.isPresent()) {
-            Estado estado = estadoExistente.get();
-            estado.setSigla(estadoAtualizado.getSigla());
-            estado.setDescricao(estadoAtualizado.getDescricao());
-            estadoRepository.save(estado);
-            return ResponseEntity.ok(estado);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        if (estado != null) return ResponseEntity.ok(estado);
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarParcialEstado(@PathVariable Long id, @RequestBody Map<String, Object> fields) {
+        EstadoDTO estado = estadoService.atualizarEstadoPatch(id, fields);
+        if (estado != null) return ResponseEntity.ok(estado);
+        return ResponseEntity.notFound().build();
     }
 
     // DELETE - DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarEstado(@PathVariable Long id) {
-        if (estadoRepository.existsById(id)) {
-            estadoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> deletarEstado(@PathVariable Long id) {
+        EstadoDTO estado = estadoService.listarEstadoPorID(id);
+        if (estado != null) {
+            estadoService.deletarEstadoPorID(id);
+            return ResponseEntity.ok("Estado com sigla \"" + estado.getSigla() + "\" deletado com sucesso!");
         }
+        return ResponseEntity.notFound().build();
     }
-
 }
